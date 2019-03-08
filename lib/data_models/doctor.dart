@@ -11,9 +11,8 @@
 //        super(userName : this.userName,
 //          fullName: this.fullName,
 //
-//          this.email,
-//          this.type,
-//          this.dateTimeOfBirth,
+//          email: this.email,
+//          dateOfBirth : this.dateTimeOfBirth,
 //          this.location,
 //          this.bio = "",
 //          this.profilePictureURLbio: this.bio);
