@@ -4,9 +4,15 @@ import 'package:periup/pages/home_page.dart';
 import 'package:periup/pages/user_form.dart';
 import 'package:periup/utils/firebase_user_authentication.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final FirebaseAuthentication firebaseGoogleAuthentication =
       FirebaseAuthentication();
+
   FirebaseUser user;
 
   @override
@@ -30,13 +36,14 @@ class SignInPage extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 190.0, bottom: 10.0),
-                child: CircleAvatar(
-                  maxRadius: 60.0,
-                  backgroundColor: Colors.black,
-                  child: Text(
-                    "P",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image:
+                          NetworkImage("https://goo.gl/images/1hPNn2"))),
                 ),
               ),
               Text("Periup",
@@ -47,11 +54,10 @@ class SignInPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 38.0, bottom: 40.0),
                 child: Text(
-                  "This is a dummy text" +
+                  "Gearing up for periods with dignity!" +
                       "\n" +
-                      "and solely aims to explain how text would like like" +
-                      "\n" +
-                      "in the description. it tells you about the app",
+                      "This app aims at building a global community of women sharing their " +
+                      "menstruation stories, challenges and taboos.",
                   style: TextStyle(color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
@@ -73,7 +79,15 @@ class SignInPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Icon(Icons.account_circle),
+                    Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image:
+                              NetworkImage(""))),
+                    ),
                     Text(
                       " Sign In ",
                     )

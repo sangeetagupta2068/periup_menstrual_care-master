@@ -8,6 +8,7 @@ class FirebaseDataBaseConnectivty {
       Firestore.instance.collection('user');
   final CollectionReference postCollectionReference =
       Firestore.instance.collection('post');
+
 //  final CollectionReference doctorCollectionReference = Firestore.instance.collection('doctor');
 
   void insertPostRecord(MenstrualStoryPost post) {
@@ -15,6 +16,7 @@ class FirebaseDataBaseConnectivty {
         .document(post.userEmail + post.dateTimeOfPost);
     postDocumentReference.setData(<String, Object>{
       'author_name': post.authorName,
+      'author_email': post.userEmail,
       'post_content': post.content,
       'post_published_at': post.dateTimeOfPost,
       'likes': [],

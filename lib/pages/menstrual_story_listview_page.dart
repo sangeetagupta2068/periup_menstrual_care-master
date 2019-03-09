@@ -11,21 +11,37 @@ class MenstrualCommunityPage extends StatefulWidget {
 
 class MenstrualCommunityPageState extends State<MenstrualCommunityPage> {
   FirebaseDataBaseConnectivty firebaseDataBaseConnectivty =
-  new FirebaseDataBaseConnectivty();
-
-  int likeCount = 0;
-  int dislikeCount = 0;
+      new FirebaseDataBaseConnectivty();
 
   List<MenstrualStoryPost> _posts = [];
 
   Firestore firestore = Firestore.instance;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-
-  void _setLikes(MenstrualStoryPost postItem) async{
-      FirebaseUser firebaseUser = await firebaseAuth.currentUser();
-      firestore.collection('post').document(postItem.userEmail + postItem.dateTimeOfPost ).collection('likes').document(firebaseUser.email + DateTime.now().toIso8601String());
-
+  void _setLikes(MenstrualStoryPost postItem) async {
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    firestore
+        .collection('post')
+        .document(postItem.userEmail + postItem.dateTimeOfPost)
+        .collection('likes')
+        .document()
+        .setData({
+      'liked_user': firebaseUser.email,
+    }).whenComplete(() {
+      setState(() {
+        postItem.likeFlag = true;
+      });
+    });
+    firestore
+        .collection('post')
+        .document(postItem.userEmail + postItem.dateTimeOfPost)
+        .collection('likes')
+        .getDocuments()
+        .then((snap) {
+      postItem.likeCount = snap.documents.length;
+    });
+    // ;          .collec
+// tion('likes').document(firebaseUser.email + DateTime.now().toIso8601String());
   }
 
   @override
@@ -37,11 +53,10 @@ class MenstrualCommunityPageState extends State<MenstrualCommunityPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(_posts.length == 0){
-       return Center(
-         child: Text("no posts yet."),
-       );
+    if (_posts.length == 0) {
+      return Center(
+        child: Text("no posts yet."),
+      );
     }
     return ListView.builder(
         itemCount: _posts.length,
@@ -56,18 +71,24 @@ class MenstrualCommunityPageState extends State<MenstrualCommunityPage> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-//                      CircleAvatar(child: Image.network(_posts[position].photoUrl), maxRadius: 15.0,),
-                     Icon(Icons.account_circle, size: 30.0),
+                      _posts[position].photoUrl!=null?Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image:
+                                    NetworkImage(_posts[position].photoUrl))),
+                      ) : Icon(Icons.account_circle),
                       Text(
-                        _posts[position].authorName,
+                        " " + _posts[position].authorName,
                         style: TextStyle(color: Colors.redAccent),
                       ),
                     ],
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                        _posts[position].content),
+                    child: Text(_posts[position].content),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
@@ -80,11 +101,18 @@ class MenstrualCommunityPageState extends State<MenstrualCommunityPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       GestureDetector(
-                          child: Icon(Icons.sentiment_satisfied),
-                        onTap: () { _setLikes(_posts[position]);},
+                        child: Icon(
+                          Icons.sentiment_satisfied,
+                          color: _posts[position].likeFlag
+                              ? Colors.yellow
+                              : Colors.blueGrey,
+                        ),
+                        onTap: () {
+                          _setLikes(_posts[position]);
+                        },
                       ),
                       Text("  "),
-                      Icon(Icons.sentiment_dissatisfied),
+                      Text(_posts[position].likeCount.toString()),
                     ],
                   ),
                 ],
@@ -97,11 +125,14 @@ class MenstrualCommunityPageState extends State<MenstrualCommunityPage> {
   void _getData() async {
     firestore.collection('post').getDocuments().then((snapshot) {
       snapshot.documents.forEach((document) {
-        _posts.add(MenstrualStoryPost(dateTimeOfPost: document.data['post_published_at'],authorName: document.data['author_name'], content: document.data['post_content']));
+        _posts.add(MenstrualStoryPost(
+            userEmail: document.data['author_email'],
+            photoUrl: document.data['author_pic'],
+            dateTimeOfPost: document.data['post_published_at'],
+            authorName: document.data['author_name'],
+            content: document.data['post_content']));
       });
       setState(() {});
     });
   }
-
 }
-

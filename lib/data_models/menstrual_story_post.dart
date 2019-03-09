@@ -4,6 +4,8 @@ class MenstrualStoryPost {
   String photoUrl;
   String content;
   String dateTimeOfPost;
+  bool likeFlag = false;
+  int likeCount = 0;
 
   MenstrualStoryPost(
       {this.authorName,
